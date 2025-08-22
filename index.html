@@ -1,2 +1,165 @@
-<p>this is first page.</p>
-<p>when i was a young man.</p>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>均衡之道 · 次序永存</title>
+  <meta name="color-scheme" content="dark light">
+  <style>
+    :root{
+      --bg-0: #0a0c12;
+      --bg-1: #0f1420;
+      --ink: 255,255,255;
+      --accent: 255,113,91;
+      --grid-gap: 84px;
+      --rx: 0deg;
+      --ry: 0deg;
+      --mx: 50%;
+      --my: 50%;
+    }
+    @media (prefers-color-scheme: light){
+      :root{ --bg-0:#f7f8fa; --bg-1:#e6ebf2; --ink: 14,18,28; --accent: 255,113,91; }
+    }
+    *{ box-sizing: border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "SF Pro Display",
+        "PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Segoe UI",
+        "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+      color: rgb(var(--ink));
+      background:
+        radial-gradient(120vmax 120vmax at var(--mx) var(--my), var(--bg-1) 0 40%, var(--bg-0) 70%);
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+    }
+    /* animated order grid */
+    .grid{
+      position:fixed;
+      inset:-150vmax;
+      pointer-events:none;
+      background:
+        repeating-linear-gradient(to right, rgba(var(--ink),.06) 0 1px, transparent 1px var(--grid-gap)),
+        repeating-linear-gradient(to bottom, rgba(var(--ink),.06) 0 1px, transparent 1px var(--grid-gap));
+      transform: rotate(0.0001turn);
+      animation: drift 28s linear infinite;
+      mix-blend-mode: overlay;
+    }
+    @keyframes drift{
+      0%{ transform: translate3d(0,0,0) rotate(0.0001turn); }
+      100%{ transform: translate3d(calc(var(--grid-gap)*-1), calc(var(--grid-gap)*-1), 0) rotate(0.0001turn); }
+    }
+
+    /* center phrase */
+    .scene{
+      position:relative;
+      display:grid;
+      place-items:center;
+      perspective:1200px;
+      padding:4vmin;
+    }
+    .card{
+      transform: rotateX(var(--rx)) rotateY(var(--ry));
+      transition: transform .12s ease-out;
+      text-align:center;
+      filter: drop-shadow(0 12px 45px rgba(0,0,0,.35));
+    }
+    h1{
+      margin:0;
+      font-size: clamp(28px, 8vw, 72px);
+      line-height:1.15;
+      letter-spacing:.08em;
+      font-weight:700;
+      background: linear-gradient(100deg, rgba(var(--ink),.85), rgba(var(--ink),1) 35%, rgba(var(--accent),.9) 65%, rgba(var(--ink),.95));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: shimmer 6s ease-in-out infinite;
+      white-space: nowrap;
+    }
+    @keyframes shimmer {
+      0%,100%{ background-position: 0% 50%; }
+      50%{ background-position: 100% 50%; }
+    }
+    .rule{
+      margin-top: 1.25rem;
+      width: 46vmin;
+      max-width: 420px;
+      height: 1.5px;
+      background: linear-gradient(90deg, transparent, rgba(var(--ink),.65), transparent);
+      transform-origin: left;
+      animation: breathe 5s ease-in-out infinite;
+      opacity:.85;
+    }
+    @keyframes breathe{
+      0%,100%{ transform: scaleX(.92); }
+      50%{ transform: scaleX(1.04); }
+    }
+
+    /* subtle corner orbs to hint balance */
+    .orb{
+      position: fixed;
+      width: 44vmin; height: 44vmin;
+      border-radius: 50%;
+      filter: blur(40px);
+      opacity: .18;
+      mix-blend-mode: screen;
+      pointer-events:none;
+    }
+    .orb.a{ left:-10vmin; top:-6vmin; background: radial-gradient(circle at 30% 30%, #ff715b, transparent 60%); }
+    .orb.b{ right:-12vmin; bottom:-10vmin; background: radial-gradient(circle at 70% 70%, #3fa9ff, transparent 60%); }
+
+    /* helper hint (auto-fade) */
+    .hint{
+      position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+      font-size: 12px; letter-spacing:.12em; opacity:.65;
+      user-select:none;
+      animation: fadeOut 6s ease forwards 2.3s;
+    }
+    @keyframes fadeOut{ to{ opacity:0; transform: translateX(-50%) translateY(4px); } }
+  </style>
+</head>
+<body>
+  <div class="grid" aria-hidden="true"></div>
+  <div class="orb a" aria-hidden="true"></div>
+  <div class="orb b" aria-hidden="true"></div>
+
+  <main class="scene" role="main">
+    <div class="card">
+      <h1>均衡之道，次序永存。</h1>
+      <div class="rule" aria-hidden="true"></div>
+    </div>
+  </main>
+
+  <div class="hint">移动鼠标/手指试试</div>
+
+  <script>
+    // Lightweight tilt + radial focus based on pointer position
+    const root = document.documentElement;
+    const scene = document.querySelector('.scene');
+
+    function setVars(x, y, rect){
+      const cx = rect ? (x - rect.left) / rect.width : x / innerWidth;
+      const cy = rect ? (y - rect.top) / rect.height : y / innerHeight;
+      const rx = (cy - .5) * -6; // tilt X
+      const ry = (cx - .5) * 8;  // tilt Y
+      root.style.setProperty('--rx', rx.toFixed(2) + 'deg');
+      root.style.setProperty('--ry', ry.toFixed(2) + 'deg');
+      root.style.setProperty('--mx', (cx * 100).toFixed(3) + '%');
+      root.style.setProperty('--my', (cy * 100).toFixed(3) + '%');
+    }
+
+    let rect = scene.getBoundingClientRect();
+    setVars(innerWidth/2, innerHeight/2, rect);
+    addEventListener('resize', ()=>{ rect = scene.getBoundingClientRect(); });
+
+    function handle(e){
+      const t = e.touches ? e.touches[0] : e;
+      setVars(t.clientX, t.clientY, rect);
+    }
+    window.addEventListener('pointermove', handle, {passive:true});
+    window.addEventListener('touchmove', handle, {passive:true});
+  </script>
+</body>
+</html>
