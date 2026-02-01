@@ -3,163 +3,472 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>均衡之道 · 次序永存</title>
+  <title>均衡之道 · 次序永存 | HAST</title>
+  
+  <!-- SEO & Social Meta -->
+  <meta name="description" content="均衡之道，次序永存 — 探索秩序与平衡的哲学">
+  <meta name="keywords" content="均衡, 秩序, 哲学, HAST">
+  <meta name="author" content="HAST">
+  <meta name="robots" content="index, follow">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hastws.github.io/">
+  <meta property="og:title" content="均衡之道 · 次序永存">
+  <meta property="og:description" content="探索秩序与平衡的哲学">
+  <meta property="og:image" content="https://hastws.github.io/og-image.png">
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://hastws.github.io/">
+  <meta property="twitter:title" content="均衡之道 · 次序永存">
+  <meta property="twitter:description" content="探索秩序与平衡的哲学">
+  
+  <!-- Theme & PWA -->
   <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#0a0c12" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+  <link rel="canonical" href="https://hastws.github.io/">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚖️</text></svg>">
+  
   <style>
     :root{
       --bg-0: #0a0c12;
       --bg-1: #0f1420;
+      --bg-2: #161d2d;
       --ink: 255,255,255;
       --accent: 255,113,91;
+      --accent-2: 63,169,255;
       --grid-gap: 84px;
       --rx: 0deg;
       --ry: 0deg;
       --mx: 50%;
       --my: 50%;
+      --particle-count: 30;
     }
     @media (prefers-color-scheme: light){
-      :root{ --bg-0:#f7f8fa; --bg-1:#e6ebf2; --ink: 14,18,28; --accent: 255,113,91; }
+      :root{ 
+        --bg-0:#f7f8fa; 
+        --bg-1:#e6ebf2; 
+        --bg-2:#d8e0eb;
+        --ink: 14,18,28; 
+        --accent: 220,80,60; 
+        --accent-2: 40,130,220;
+      }
     }
-    *{ box-sizing: border-box; }
-    html,body{ height:100%; }
+    *{ box-sizing: border-box; margin:0; padding:0; }
+    html{ height:100%; scroll-behavior: smooth; }
     body{
-      margin:0;
+      min-height:100%;
       font-family: ui-sans-serif, system-ui, -apple-system, "SF Pro Display",
         "PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Segoe UI",
         "Helvetica Neue", Arial, "Noto Sans", sans-serif;
       color: rgb(var(--ink));
-      background:
-        radial-gradient(120vmax 120vmax at var(--mx) var(--my), var(--bg-1) 0 40%, var(--bg-0) 70%);
+      background: var(--bg-0);
       display:grid;
       place-items:center;
-      overflow:hidden;
+      overflow-x:hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
-    /* animated order grid */
+
+    /* Animated gradient background */
+    .bg-gradient{
+      position:fixed;
+      inset:0;
+      background:
+        radial-gradient(ellipse 80% 60% at var(--mx) var(--my), var(--bg-1) 0%, transparent 50%),
+        radial-gradient(ellipse 60% 80% at 20% 80%, rgba(var(--accent),.08) 0%, transparent 40%),
+        radial-gradient(ellipse 60% 80% at 80% 20%, rgba(var(--accent-2),.06) 0%, transparent 40%),
+        var(--bg-0);
+      z-index:-3;
+      transition: background .3s ease;
+    }
+
+    /* Animated order grid */
     .grid{
       position:fixed;
       inset:-150vmax;
       pointer-events:none;
       background:
-        repeating-linear-gradient(to right, rgba(var(--ink),.06) 0 1px, transparent 1px var(--grid-gap)),
-        repeating-linear-gradient(to bottom, rgba(var(--ink),.06) 0 1px, transparent 1px var(--grid-gap));
+        repeating-linear-gradient(to right, rgba(var(--ink),.04) 0 1px, transparent 1px var(--grid-gap)),
+        repeating-linear-gradient(to bottom, rgba(var(--ink),.04) 0 1px, transparent 1px var(--grid-gap));
       transform: rotate(0.0001turn);
-      animation: drift 28s linear infinite;
-      mix-blend-mode: overlay;
+      animation: drift 32s linear infinite;
+      z-index:-2;
     }
     @keyframes drift{
       0%{ transform: translate3d(0,0,0) rotate(0.0001turn); }
       100%{ transform: translate3d(calc(var(--grid-gap)*-1), calc(var(--grid-gap)*-1), 0) rotate(0.0001turn); }
     }
 
-    /* center phrase */
+    /* Floating particles */
+    .particles{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:-1;
+      overflow:hidden;
+    }
+    .particle{
+      position:absolute;
+      width: 3px;
+      height: 3px;
+      background: rgba(var(--accent),.6);
+      border-radius: 50%;
+      animation: float 20s infinite ease-in-out;
+    }
+    .particle:nth-child(even){ background: rgba(var(--accent-2),.5); }
+    @keyframes float{
+      0%,100%{ transform: translateY(100vh) scale(0); opacity:0; }
+      10%{ opacity:1; transform: translateY(80vh) scale(1); }
+      90%{ opacity:1; transform: translateY(10vh) scale(1); }
+      100%{ transform: translateY(-5vh) scale(0); opacity:0; }
+    }
+
+    /* Center phrase */
     .scene{
       position:relative;
-      display:grid;
-      place-items:center;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      min-height:100vh;
       perspective:1200px;
-      padding:4vmin;
+      padding: 2rem;
     }
     .card{
       transform: rotateX(var(--rx)) rotateY(var(--ry));
-      transition: transform .12s ease-out;
+      transition: transform .15s cubic-bezier(.23,1,.32,1);
       text-align:center;
-      filter: drop-shadow(0 12px 45px rgba(0,0,0,.35));
+      filter: drop-shadow(0 16px 60px rgba(0,0,0,.25));
     }
+    
+    /* Logo/Symbol */
+    .symbol{
+      font-size: clamp(48px, 12vw, 96px);
+      margin-bottom: 1.5rem;
+      animation: pulse 4s ease-in-out infinite;
+      filter: drop-shadow(0 0 20px rgba(var(--accent),.3));
+    }
+    @keyframes pulse{
+      0%,100%{ transform: scale(1); }
+      50%{ transform: scale(1.05); }
+    }
+
     h1{
-      margin:0;
-      font-size: clamp(28px, 8vw, 72px);
-      line-height:1.15;
-      letter-spacing:.08em;
-      font-weight:700;
-      background: linear-gradient(100deg, rgba(var(--ink),.85), rgba(var(--ink),1) 35%, rgba(var(--accent),.9) 65%, rgba(var(--ink),.95));
+      font-size: clamp(32px, 9vw, 80px);
+      line-height:1.1;
+      letter-spacing:.1em;
+      font-weight:800;
+      background: linear-gradient(
+        135deg, 
+        rgba(var(--ink),1) 0%, 
+        rgba(var(--accent),1) 25%, 
+        rgba(var(--ink),1) 50%, 
+        rgba(var(--accent-2),.9) 75%, 
+        rgba(var(--ink),1) 100%
+      );
+      background-size: 300% 300%;
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      animation: shimmer 6s ease-in-out infinite;
-      white-space: nowrap;
+      animation: gradient-shift 8s ease infinite;
     }
-    @keyframes shimmer {
-      0%,100%{ background-position: 0% 50%; }
+    @keyframes gradient-shift {
+      0%{ background-position: 0% 50%; }
       50%{ background-position: 100% 50%; }
+      100%{ background-position: 0% 50%; }
     }
+
+    .subtitle{
+      margin-top: 1rem;
+      font-size: clamp(14px, 2.5vw, 18px);
+      font-weight: 400;
+      letter-spacing: .25em;
+      color: rgba(var(--ink),.6);
+      text-transform: uppercase;
+    }
+
     .rule{
-      margin-top: 1.25rem;
-      width: 46vmin;
-      max-width: 420px;
-      height: 1.5px;
-      background: linear-gradient(90deg, transparent, rgba(var(--ink),.65), transparent);
-      transform-origin: left;
-      animation: breathe 5s ease-in-out infinite;
-      opacity:.85;
+      margin-top: 2rem;
+      width: min(60vw, 500px);
+      height: 2px;
+      background: linear-gradient(90deg, 
+        transparent, 
+        rgba(var(--accent),.8) 20%, 
+        rgba(var(--ink),.5) 50%, 
+        rgba(var(--accent-2),.8) 80%, 
+        transparent
+      );
+      transform-origin: center;
+      animation: breathe 6s ease-in-out infinite;
+      border-radius: 1px;
     }
     @keyframes breathe{
-      0%,100%{ transform: scaleX(.92); }
-      50%{ transform: scaleX(1.04); }
+      0%,100%{ transform: scaleX(.9); opacity:.7; }
+      50%{ transform: scaleX(1.05); opacity:1; }
     }
 
-    /* subtle corner orbs to hint balance */
+    /* Social/Links Section */
+    .links{
+      margin-top: 3rem;
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .links a{
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .75rem 1.5rem;
+      background: rgba(var(--ink),.05);
+      border: 1px solid rgba(var(--ink),.1);
+      border-radius: 2rem;
+      color: rgba(var(--ink),.8);
+      text-decoration: none;
+      font-size: 14px;
+      letter-spacing: .05em;
+      transition: all .3s cubic-bezier(.23,1,.32,1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .links a:hover{
+      background: rgba(var(--accent),.15);
+      border-color: rgba(var(--accent),.4);
+      color: rgb(var(--ink));
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(var(--accent),.2);
+    }
+    .links a svg{
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    /* Subtle corner orbs */
     .orb{
       position: fixed;
-      width: 44vmin; height: 44vmin;
+      width: 50vmin; height: 50vmin;
       border-radius: 50%;
-      filter: blur(40px);
-      opacity: .18;
+      filter: blur(60px);
+      opacity: .12;
       mix-blend-mode: screen;
       pointer-events:none;
+      z-index:-1;
+      animation: orb-drift 25s ease-in-out infinite alternate;
     }
-    .orb.a{ left:-10vmin; top:-6vmin; background: radial-gradient(circle at 30% 30%, #ff715b, transparent 60%); }
-    .orb.b{ right:-12vmin; bottom:-10vmin; background: radial-gradient(circle at 70% 70%, #3fa9ff, transparent 60%); }
+    .orb.a{ 
+      left:-15vmin; top:-10vmin; 
+      background: radial-gradient(circle at 30% 30%, rgb(var(--accent)), transparent 70%); 
+    }
+    .orb.b{ 
+      right:-15vmin; bottom:-10vmin; 
+      background: radial-gradient(circle at 70% 70%, rgb(var(--accent-2)), transparent 70%); 
+      animation-delay: -12s;
+    }
+    @keyframes orb-drift{
+      0%{ transform: translate(0,0) scale(1); }
+      100%{ transform: translate(20px, 20px) scale(1.1); }
+    }
 
-    /* helper hint (auto-fade) */
+    /* Helper hint */
     .hint{
-      position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
-      font-size: 12px; letter-spacing:.12em; opacity:.65;
+      position: fixed; 
+      bottom: max(22px, env(safe-area-inset-bottom, 22px)); 
+      left: 50%; 
+      transform: translateX(-50%);
+      font-size: 12px; 
+      letter-spacing:.15em; 
+      color: rgba(var(--ink),.5);
       user-select:none;
-      animation: fadeOut 6s ease forwards 2.3s;
+      animation: fadeOut 8s ease forwards 3s;
     }
-    @keyframes fadeOut{ to{ opacity:0; transform: translateX(-50%) translateY(4px); } }
+    @keyframes fadeOut{ 
+      to{ opacity:0; transform: translateX(-50%) translateY(8px); pointer-events:none; } 
+    }
+
+    /* Footer */
+    footer{
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 1rem;
+      text-align: center;
+      font-size: 11px;
+      color: rgba(var(--ink),.3);
+      letter-spacing: .1em;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 600px){
+      .links{ gap: 1rem; }
+      .links a{ padding: .6rem 1.2rem; font-size: 13px; }
+      .symbol{ margin-bottom: 1rem; }
+    }
+
+    /* Reduced motion preference */
+    @media (prefers-reduced-motion: reduce){
+      *, *::before, *::after{
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* Print styles */
+    @media print{
+      .grid, .orb, .particles, .hint, .bg-gradient{ display:none; }
+      body{ background: white; }
+      h1{ color: black; background: none; -webkit-background-clip: unset; }
+    }
   </style>
 </head>
 <body>
+  <div class="bg-gradient" aria-hidden="true"></div>
   <div class="grid" aria-hidden="true"></div>
+  <div class="particles" aria-hidden="true" id="particles"></div>
   <div class="orb a" aria-hidden="true"></div>
   <div class="orb b" aria-hidden="true"></div>
 
   <main class="scene" role="main">
-    <div class="card">
-      <h1>均衡之道，次序永存。</h1>
+    <article class="card">
+      <div class="symbol" aria-hidden="true">⚖️</div>
+      <h1>均衡之道<br>次序永存</h1>
+      <p class="subtitle">Balance · Order · Harmony</p>
       <div class="rule" aria-hidden="true"></div>
-    </div>
+      
+      <nav class="links" aria-label="社交链接">
+        <a href="https://github.com/hastws" target="_blank" rel="noopener noreferrer" title="GitHub">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          GitHub
+        </a>
+        <a href="mailto:hastws@hotmail.com" title="邮箱联系">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M0 3v18h24v-18h-24zm21.518 2l-9.518 7.713-9.518-7.713h19.036zm-19.518 14v-11.817l10 8.104 10-8.104v11.817h-20z"/></svg>
+          联系
+        </a>
+      </nav>
+    </article>
   </main>
 
-  <div class="hint">移动鼠标/手指试试</div>
+  <div class="hint"></div>
+  
+  <footer>
+    <span>© 2026 hastws · 均衡之道</span>
+  </footer>
 
   <script>
-    // Lightweight tilt + radial focus based on pointer position
-    const root = document.documentElement;
-    const scene = document.querySelector('.scene');
+    (function(){
+      'use strict';
+      
+      const root = document.documentElement;
+      const scene = document.querySelector('.scene');
+      const particlesContainer = document.getElementById('particles');
+      
+      // Generate floating particles
+      const particleCount = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 25;
+      for(let i = 0; i < particleCount; i++){
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.cssText = `
+          left: ${Math.random() * 100}%;
+          animation-delay: ${Math.random() * 20}s;
+          animation-duration: ${15 + Math.random() * 15}s;
+          width: ${2 + Math.random() * 3}px;
+          height: ${2 + Math.random() * 3}px;
+        `;
+        particlesContainer.appendChild(p);
+      }
 
-    function setVars(x, y, rect){
-      const cx = rect ? (x - rect.left) / rect.width : x / innerWidth;
-      const cy = rect ? (y - rect.top) / rect.height : y / innerHeight;
-      const rx = (cy - .5) * -6; // tilt X
-      const ry = (cx - .5) * 8;  // tilt Y
-      root.style.setProperty('--rx', rx.toFixed(2) + 'deg');
-      root.style.setProperty('--ry', ry.toFixed(2) + 'deg');
-      root.style.setProperty('--mx', (cx * 100).toFixed(3) + '%');
-      root.style.setProperty('--my', (cy * 100).toFixed(3) + '%');
-    }
+      // Lightweight tilt + radial focus based on pointer position
+      let rect = scene.getBoundingClientRect();
+      let animFrame = null;
+      let targetRx = 0, targetRy = 0, targetMx = 50, targetMy = 50;
+      let currentRx = 0, currentRy = 0, currentMx = 50, currentMy = 50;
 
-    let rect = scene.getBoundingClientRect();
-    setVars(innerWidth/2, innerHeight/2, rect);
-    addEventListener('resize', ()=>{ rect = scene.getBoundingClientRect(); });
+      function lerp(start, end, factor) {
+        return start + (end - start) * factor;
+      }
 
-    function handle(e){
-      const t = e.touches ? e.touches[0] : e;
-      setVars(t.clientX, t.clientY, rect);
-    }
-    window.addEventListener('pointermove', handle, {passive:true});
-    window.addEventListener('touchmove', handle, {passive:true});
+      function animate() {
+        currentRx = lerp(currentRx, targetRx, 0.08);
+        currentRy = lerp(currentRy, targetRy, 0.08);
+        currentMx = lerp(currentMx, targetMx, 0.05);
+        currentMy = lerp(currentMy, targetMy, 0.05);
+
+        root.style.setProperty('--rx', currentRx.toFixed(2) + 'deg');
+        root.style.setProperty('--ry', currentRy.toFixed(2) + 'deg');
+        root.style.setProperty('--mx', currentMx.toFixed(2) + '%');
+        root.style.setProperty('--my', currentMy.toFixed(2) + '%');
+
+        animFrame = requestAnimationFrame(animate);
+      }
+
+      function setTargets(x, y){
+        const cx = x / innerWidth;
+        const cy = y / innerHeight;
+        targetRx = (cy - 0.5) * -8;
+        targetRy = (cx - 0.5) * 10;
+        targetMx = cx * 100;
+        targetMy = cy * 100;
+      }
+
+      // Initialize at center
+      setTargets(innerWidth / 2, innerHeight / 2);
+      currentMx = targetMx; currentMy = targetMy;
+      animate();
+
+      // Event handlers with throttling
+      let lastMove = 0;
+      function handle(e){
+        const now = performance.now();
+        if(now - lastMove < 16) return; // ~60fps throttle
+        lastMove = now;
+        
+        const t = e.touches ? e.touches[0] : e;
+        setTargets(t.clientX, t.clientY);
+      }
+
+      // Resize handler with debounce
+      let resizeTimer;
+      function handleResize(){
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          rect = scene.getBoundingClientRect();
+        }, 150);
+      }
+
+      window.addEventListener('pointermove', handle, {passive:true});
+      window.addEventListener('touchmove', handle, {passive:true});
+      window.addEventListener('resize', handleResize, {passive:true});
+
+      // Cleanup on page hide
+      document.addEventListener('visibilitychange', () => {
+        if(document.hidden && animFrame){
+          cancelAnimationFrame(animFrame);
+        } else if(!document.hidden){
+          animate();
+        }
+      });
+
+      // Easter egg: Konami code
+      const konamiCode = [38,38,40,40,37,39,37,39,66,65];
+      let konamiIndex = 0;
+      document.addEventListener('keydown', (e) => {
+        if(e.keyCode === konamiCode[konamiIndex]){
+          konamiIndex++;
+          if(konamiIndex === konamiCode.length){
+            document.body.style.setProperty('--accent', '255,215,0');
+            document.body.style.setProperty('--accent-2', '148,0,211');
+            konamiIndex = 0;
+          }
+        } else {
+          konamiIndex = 0;
+        }
+      });
+    })();
   </script>
 </body>
 </html>
